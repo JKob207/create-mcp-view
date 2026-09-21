@@ -2,7 +2,6 @@ import type { CSSProperties } from "react";
 
 import { useMcpApp } from "./useMcpApp";
 
-/** Sent to the conversation by the second button. */
 const DATE_PROMPT = "What is the current date?";
 
 export default function App() {
@@ -35,8 +34,6 @@ export default function App() {
       className={`frame${isFullscreen ? " frame--fullscreen" : ""}`}
       style={frameStyle}
     >
-      {/* Scaffolder placeholder, not a JSX expression: the generator
-          replaces the double braces below with the app's name. */}
       <h1 className="title">{{title}}</h1>
 
       <p className="message">
