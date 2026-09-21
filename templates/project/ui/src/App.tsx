@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { useMcpApp } from "./useMcpApp";
 
 /** Sent to the conversation by the second button. */
-const TIME_PROMPT = "What is the current time?";
+const DATE_PROMPT = "What is the current date?";
 
 export default function App() {
   const {
@@ -61,10 +61,10 @@ export default function App() {
         <button
           type="button"
           className="button"
-          onClick={() => void sendToChat(TIME_PROMPT)}
+          onClick={() => void sendToChat(DATE_PROMPT)}
           disabled={!isConnected}
         >
-          Ask about current time
+          Ask about current date
         </button>
       </div>
 

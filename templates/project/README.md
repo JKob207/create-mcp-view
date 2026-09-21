@@ -86,7 +86,7 @@ wiring lives in `ui/src/useMcpApp.ts`:
 | ----------------------- | ----------------------------------- | ------------------------------------ |
 | Receive the tool result | `app.ontoolresult`                  | Initial render                       |
 | Stream arguments        | `app.ontoolinputpartial`            | Progress while the model generates   |
-| Speak in the chat       | `app.sendMessage()`                 | "Ask about current time"             |
+| Speak in the chat       | `app.sendMessage()`                 | "Ask about current date"             |
 | Go fullscreen           | `app.requestDisplayMode()`          | Expand from inline                   |
 | Match the host's design | `useHostStyles(app)`                | CSS variables, fonts, light/dark     |
 | Call back into Python   | `app.callServerTool()`              | Refresh, pagination, form submits    |
