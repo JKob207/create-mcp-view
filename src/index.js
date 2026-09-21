@@ -97,8 +97,18 @@ async function installDependencies(projectDir) {
   return results;
 }
 
+/**
+ * A relative path is friendlier, but only while it stays short. Once it
+ * climbs out of the current directory it is worse than the absolute one.
+ */
+function displayPath(target) {
+  const relative = path.relative(process.cwd(), target);
+  if (!relative) return ".";
+  return relative.startsWith("..") ? target : relative;
+}
+
 function printNextSteps(names, projectDir, installed) {
-  const rel = path.relative(process.cwd(), projectDir) || ".";
+  const rel = displayPath(projectDir);
 
   console.log(`\n${GREEN}✔${RESET} Created ${BOLD}${names.title}${RESET} in ${DIM}${rel}${RESET}\n`);
   console.log(`${BOLD}Next steps${RESET}\n`);
@@ -154,7 +164,7 @@ export async function run(argv) {
 
   // Confirm what will actually be written before writing it.
   if (!options.yes && isInteractive()) {
-    console.log(`\n  ${DIM}directory ${RESET}${path.relative(process.cwd(), projectDir) || "."}`);
+    console.log(`\n  ${DIM}directory ${RESET}${displayPath(projectDir)}`);
     console.log(`  ${DIM}python   ${RESET}${names.pyPackage}/`);
     console.log(`  ${DIM}tool     ${RESET}${names.toolName}`);
     console.log(`  ${DIM}resource ${RESET}${names.resourceUri}\n`);

@@ -5,11 +5,15 @@ interactive React UI inside the host, instead of returning text the model has
 to describe.
 
 ```bash
-npx create-mcp-ui-app "Weather Radar"
+node bin/cli.js "Weather Radar"
 ```
 
 You get a project that runs immediately: install, build, serve, and the tool
 renders a working panel in any MCP Apps host.
+
+> **Not published to npm.** `npx create-mcp-ui-app` will *not* run this — an
+> unrelated placeholder package owns that name on the registry and prints
+> "Coming Soon". Run it locally instead (see [Running it](#running-it)).
 
 ## What it generates
 
@@ -52,10 +56,41 @@ weather-radar/
   `availableDisplayModes`.
 - **Wiring tests** that fail if the tool and resource ever drift apart.
 
+## Running it
+
+Three ways, in order of convenience:
+
+```bash
+# 1. Directly, from this repo
+node bin/cli.js "Weather Radar"
+
+# 2. As a local package, from this repo
+npx . "Weather Radar"
+
+# 3. Installed globally, from anywhere
+npm link                          # once, from this repo
+create-mcp-ui-app "Weather Radar" # then from any directory
+                                  # npm unlink -g create-mcp-ui-app to undo
+```
+
+Note that `npm link` claims the `create-mcp-ui-app` command globally, which
+shadows the registry package of the same name.
+
+### Publishing
+
+The bare name `create-mcp-ui-app` is taken on npm. To publish, either rename
+the package or scope it:
+
+```json
+"name": "@your-scope/create-mcp-ui-app"
+```
+
+A scoped name still works with `npm create @your-scope/mcp-ui-app`.
+
 ## Usage
 
 ```
-npx create-mcp-ui-app [name] [options]
+create-mcp-ui-app [name] [options]
 
   --dir <path>     Parent directory to create the app in (default: cwd)
   --install        Install Python and npm dependencies after scaffolding
