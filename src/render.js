@@ -11,8 +11,6 @@ import path from "node:path";
  */
 const RENAME_ON_COPY = {
   gitignore: ".gitignore",
-  npmrc: ".npmrc",
-  "python-version": ".python-version",
 };
 
 /** Extensions treated as binary and copied through untouched. */

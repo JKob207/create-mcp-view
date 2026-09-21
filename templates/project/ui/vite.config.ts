@@ -14,6 +14,11 @@ export default defineConfig(({ mode }) => {
   const isDevelopment = mode === "development";
 
   return {
+    // Relative URLs for anything not inlined. viteSingleFile inlines the JS
+    // and CSS, so this changes nothing today — but a file dropped in
+    // `public/` would otherwise be referenced as `/asset.png`, an absolute
+    // path the sandboxed iframe has no origin to resolve.
+    base: "./",
     plugins: [react(), viteSingleFile()],
     build: {
       outDir: "dist",

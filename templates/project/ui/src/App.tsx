@@ -35,6 +35,8 @@ export default function App() {
       className={`frame${isFullscreen ? " frame--fullscreen" : ""}`}
       style={frameStyle}
     >
+      {/* Scaffolder placeholder, not a JSX expression: the generator
+          replaces the double braces below with the app's name. */}
       <h1 className="title">{{title}}</h1>
 
       <p className="message">

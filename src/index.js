@@ -10,12 +10,12 @@ import { assertTargetUsable, renderTree } from "./render.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEMPLATE_DIR = path.resolve(__dirname, "..", "templates", "project");
 
-const BOLD = "[1m";
-const DIM = "[2m";
-const GREEN = "[32m";
-const CYAN = "[36m";
-const YELLOW = "[33m";
-const RESET = "[0m";
+const BOLD = "\u001b[1m";
+const DIM = "\u001b[2m";
+const GREEN = "\u001b[32m";
+const CYAN = "\u001b[36m";
+const YELLOW = "\u001b[33m";
+const RESET = "\u001b[0m";
 
 const HELP = `
 ${BOLD}create-mcp-view${RESET} — scaffold an MCP App (FastMCP server + React UI)
