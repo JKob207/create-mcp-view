@@ -11,9 +11,6 @@ npm create mcp-view "Weather Radar"
 You get a project that runs immediately: install, build, serve, and the tool
 renders a working panel in any MCP Apps host.
 
-> Not published to npm yet — until it is, run it locally
-> (see [Running it](#running-it)).
-
 ## What it generates
 
 ```
@@ -55,43 +52,16 @@ weather-radar/
   `availableDisplayModes`.
 - **Wiring tests** that fail if the tool and resource ever drift apart.
 
-## Running it
+## Installation
 
-Once published, `npm create mcp-view "Weather Radar"` is all it takes. Before
-then, run it from this repo:
-
-```bash
-# 1. Directly
-node bin/cli.js "Weather Radar"
-
-# 2. As a local package
-npx . "Weather Radar"
-
-# 3. Installed globally, usable from anywhere
-npm link                        # once, from this repo
-create-mcp-view "Weather Radar" # then from any directory
-                                # npm unlink -g create-mcp-view to undo
-```
-
-### Publishing
-
-The name `create-mcp-view` was free on npm as of 2026-09-21 — re-check before
-publishing, since that can change:
+`create-mcp-view` is published on npm. No global install needed — `npm create`
+fetches and runs it:
 
 ```bash
-npm view create-mcp-view   # a 404 means it is still available
-npm publish
+npm create mcp-view "Weather Radar"
 ```
 
-Most of the obvious alternatives (`create-mcp-app`, `create-mcp-ui`,
-`create-mcp-apps`, `create-mcp-ui-app`) are already taken, several by
-placeholder packages. If this name goes too, a scope always works:
-
-```json
-"name": "@your-scope/create-mcp-view"
-```
-
-Scoped names keep the shorthand: `npm create @your-scope/mcp-view`.
+Run it with no arguments for an interactive prompt.
 
 ## Usage
 
@@ -104,8 +74,6 @@ create-mcp-view [name] [options]
   -y, --yes        Accept defaults, no prompts (implies --install)
   -h, --help       Show help
 ```
-
-Run it with no arguments for an interactive prompt.
 
 When invoking through `npm create`, separate the flags with `--`:
 
@@ -154,7 +122,8 @@ the same layout whatever the app is called.
 Files named `gitignore` are renamed to `.gitignore` on the way out, because
 npm strips dotfiles from published packages.
 
-To verify a change, scaffold and build:
+To verify a change locally before publishing a new version, scaffold and build
+straight from the repo instead of going through the registry:
 
 ```bash
 node bin/cli.js "Smoke Test" --dir /tmp --no-install
