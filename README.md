@@ -1,19 +1,18 @@
-# create-mcp-ui-app
+# create-mcp-view
 
 Scaffold an **MCP App** — a FastMCP server in Python whose tool renders an
 interactive React UI inside the host, instead of returning text the model has
 to describe.
 
 ```bash
-node bin/cli.js "Weather Radar"
+npm create mcp-view "Weather Radar"
 ```
 
 You get a project that runs immediately: install, build, serve, and the tool
 renders a working panel in any MCP Apps host.
 
-> **Not published to npm.** `npx create-mcp-ui-app` will *not* run this — an
-> unrelated placeholder package owns that name on the registry and prints
-> "Coming Soon". Run it locally instead (see [Running it](#running-it)).
+> Not published to npm yet — until it is, run it locally
+> (see [Running it](#running-it)).
 
 ## What it generates
 
@@ -58,39 +57,46 @@ weather-radar/
 
 ## Running it
 
-Three ways, in order of convenience:
+Once published, `npm create mcp-view "Weather Radar"` is all it takes. Before
+then, run it from this repo:
 
 ```bash
-# 1. Directly, from this repo
+# 1. Directly
 node bin/cli.js "Weather Radar"
 
-# 2. As a local package, from this repo
+# 2. As a local package
 npx . "Weather Radar"
 
-# 3. Installed globally, from anywhere
-npm link                          # once, from this repo
-create-mcp-ui-app "Weather Radar" # then from any directory
-                                  # npm unlink -g create-mcp-ui-app to undo
+# 3. Installed globally, usable from anywhere
+npm link                        # once, from this repo
+create-mcp-view "Weather Radar" # then from any directory
+                                # npm unlink -g create-mcp-view to undo
 ```
-
-Note that `npm link` claims the `create-mcp-ui-app` command globally, which
-shadows the registry package of the same name.
 
 ### Publishing
 
-The bare name `create-mcp-ui-app` is taken on npm. To publish, either rename
-the package or scope it:
+The name `create-mcp-view` was free on npm as of 2026-09-21 — re-check before
+publishing, since that can change:
 
-```json
-"name": "@your-scope/create-mcp-ui-app"
+```bash
+npm view create-mcp-view   # a 404 means it is still available
+npm publish
 ```
 
-A scoped name still works with `npm create @your-scope/mcp-ui-app`.
+Most of the obvious alternatives (`create-mcp-app`, `create-mcp-ui`,
+`create-mcp-apps`, `create-mcp-ui-app`) are already taken, several by
+placeholder packages. If this name goes too, a scope always works:
+
+```json
+"name": "@your-scope/create-mcp-view"
+```
+
+Scoped names keep the shorthand: `npm create @your-scope/mcp-view`.
 
 ## Usage
 
 ```
-create-mcp-ui-app [name] [options]
+create-mcp-view [name] [options]
 
   --dir <path>     Parent directory to create the app in (default: cwd)
   --install        Install Python and npm dependencies after scaffolding
@@ -100,6 +106,12 @@ create-mcp-ui-app [name] [options]
 ```
 
 Run it with no arguments for an interactive prompt.
+
+When invoking through `npm create`, separate the flags with `--`:
+
+```bash
+npm create mcp-view "Weather Radar" -- --dir ~/projects --yes
+```
 
 The app name is normalized into every form the project needs — directory and
 npm name (`weather-radar`), Python package (`weather_radar`), tool names

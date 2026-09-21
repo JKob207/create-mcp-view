@@ -1,6 +1,6 @@
 /**
  * Minimal interactive prompts on node:readline, so the scaffolder stays
- * dependency-free and `npx create-mcp-ui-app` starts instantly.
+ * dependency-free and `npm create mcp-view` starts instantly.
  */
 import readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";

@@ -18,10 +18,10 @@ const YELLOW = "[33m";
 const RESET = "[0m";
 
 const HELP = `
-${BOLD}create-mcp-ui-app${RESET} — scaffold an MCP App (FastMCP server + React UI)
+${BOLD}create-mcp-view${RESET} — scaffold an MCP App (FastMCP server + React UI)
 
 ${BOLD}Usage${RESET}
-  npx create-mcp-ui-app [name] [options]
+  npm create mcp-view [name] [options]
 
 ${BOLD}Options${RESET}
   --dir <path>     Parent directory to create the app in (default: cwd)
@@ -31,7 +31,7 @@ ${BOLD}Options${RESET}
   -h, --help       Show this message
 
 ${BOLD}Example${RESET}
-  npx create-mcp-ui-app "Weather Radar"
+  npm create mcp-view "Weather Radar"
 `;
 
 function parseArgs(argv) {
@@ -139,13 +139,13 @@ export async function run(argv) {
     return;
   }
 
-  console.log(`\n${BOLD}create-mcp-ui-app${RESET} ${DIM}— FastMCP + React MCP App${RESET}\n`);
+  console.log(`\n${BOLD}create-mcp-view${RESET} ${DIM}— FastMCP + React MCP App${RESET}\n`);
 
   let appName = options.name;
 
   if (appName === null) {
     if (!isInteractive()) {
-      throw new Error("An app name is required when not running interactively.\nUsage: create-mcp-ui-app <name>");
+      throw new Error("An app name is required when not running interactively.\nUsage: create-mcp-view <name>");
     }
     appName = await ask("App name?", {
       defaultValue: "my-mcp-app",
