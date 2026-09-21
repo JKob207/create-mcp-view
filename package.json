@@ -1,0 +1,29 @@
+{
+  "name": "create-mcp-ui-app",
+  "version": "0.1.0",
+  "description": "Scaffold an MCP App: FastMCP (Python) server + React/TS/Vite UI, pre-wired with vite-plugin-singlefile and the MCP Apps ext-apps SDK.",
+  "type": "module",
+  "bin": {
+    "create-mcp-ui-app": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "templates",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-apps",
+    "fastmcp",
+    "model-context-protocol",
+    "scaffold",
+    "generator",
+    "react",
+    "vite"
+  ],
+  "license": "MIT"
+}
