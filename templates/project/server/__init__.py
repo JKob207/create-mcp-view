@@ -1,5 +1,5 @@
 """{{title}} — an MCP App served by FastMCP."""
 
-from {{pyPackage}}.server import mcp
+from server.app import mcp
 
 __all__ = ["mcp"]

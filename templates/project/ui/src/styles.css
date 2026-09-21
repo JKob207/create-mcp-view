@@ -11,21 +11,22 @@
  */
 
 :root {
+  /* The app's own accent, deliberately not taken from the host. */
+  --accent: #3867d6;
+  --accent-hover: #2d55b0;
+  --accent-text: #ffffff;
+
   /* Local fallbacks, used only where the host supplies nothing. */
   --local-bg: #ffffff;
-  --local-bg-subtle: #f4f4f5;
   --local-text: #18181b;
   --local-text-muted: #71717a;
-  --local-border: #e4e4e7;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --local-bg: #18181b;
-    --local-bg-subtle: #27272a;
     --local-text: #fafafa;
     --local-text-muted: #a1a1aa;
-    --local-border: #3f3f46;
   }
 }
 
@@ -45,144 +46,70 @@ body {
 .frame {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 260px;
+  padding: 32px 16px;
+  text-align: center;
   border-radius: var(--border-radius-lg, 12px);
-  overflow: hidden;
 }
 
 /* A full-bleed surface should not keep its rounded corners. */
 .frame--fullscreen {
-  border-radius: 0;
   min-height: 100vh;
-}
-
-.header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+  border-radius: 0;
 }
 
 .title {
   margin: 0;
-  font-size: var(--font-heading-md-size, 18px);
-  line-height: var(--font-heading-md-line-height, 1.3);
+  font-size: var(--font-heading-xl-size, 28px);
+  line-height: var(--font-heading-xl-line-height, 1.2);
   font-weight: var(--font-weight-semibold, 600);
 }
 
-.subtitle {
-  margin: 4px 0 0;
+.message {
+  margin: 0;
   color: var(--color-text-secondary, var(--local-text-muted));
-  font-size: var(--font-text-sm-size, 12px);
-  line-height: var(--font-text-sm-line-height, 1.4);
+  font-size: var(--font-text-sm-size, 13px);
 }
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
+  margin-top: 8px;
 }
 
-button {
-  padding: 6px 12px;
-  border: var(--border-width-regular, 1px) solid
-    var(--color-border-primary, var(--local-border));
+.button {
+  padding: 8px 16px;
+  border: none;
   border-radius: var(--border-radius-md, 8px);
-  background: var(--color-background-secondary, var(--local-bg-subtle));
-  color: var(--color-text-primary, var(--local-text));
+  background: var(--accent);
+  color: var(--accent-text);
   font: inherit;
-  font-size: var(--font-text-sm-size, 12px);
+  font-size: var(--font-text-sm-size, 13px);
+  font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
 }
 
-button:hover:not(:disabled) {
-  background: var(--color-background-tertiary, var(--local-border));
+.button:hover:not(:disabled) {
+  background: var(--accent-hover);
 }
 
-button:disabled {
-  color: var(--color-text-disabled, var(--local-text-muted));
+.button:disabled {
+  opacity: 0.5;
   cursor: default;
 }
 
-button:focus-visible {
-  outline: 2px solid var(--color-ring-primary, #3b82f6);
+.button:focus-visible {
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.card {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 2px 12px;
-  width: 100%;
-  padding: 12px;
-  text-align: left;
-}
-
-.card--selected {
-  border-color: var(--color-border-info, #3b82f6);
-}
-
-.card__title {
-  font-size: var(--font-text-md-size, 14px);
-  font-weight: var(--font-weight-medium, 500);
-}
-
-.card__detail {
-  grid-column: 1;
-  color: var(--color-text-secondary, var(--local-text-muted));
-  font-size: var(--font-text-sm-size, 12px);
-}
-
-.card__score {
-  grid-row: 1 / span 2;
-  grid-column: 2;
-  align-self: center;
-  color: var(--color-text-secondary, var(--local-text-muted));
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: var(--font-text-sm-size, 12px);
-}
-
-.card__footer {
-  display: flex;
-  gap: 8px;
-  padding: 8px 0 0 12px;
-}
-
-.state {
-  padding: 24px 12px;
-  color: var(--color-text-secondary, var(--local-text-muted));
-  text-align: center;
-}
-
-.state--error {
-  color: var(--color-text-danger, #dc2626);
-}
-
 .banner {
-  margin: 0;
-  padding: 8px 12px;
-  border-radius: var(--border-radius-md, 8px);
-  font-size: var(--font-text-sm-size, 12px);
-}
-
-.banner--error {
-  background: var(--color-background-danger, #fee2e2);
-  color: var(--color-text-danger, #991b1b);
-}
-
-/* The host may render this app in a narrow sidebar. */
-@media (max-width: 420px) {
-  .header {
-    flex-direction: column;
-  }
+  margin: 4px 0 0;
+  color: var(--color-text-danger, #dc2626);
+  font-size: var(--font-text-sm-size, 13px);
 }

@@ -165,7 +165,7 @@ export async function run(argv) {
   // Confirm what will actually be written before writing it.
   if (!options.yes && isInteractive()) {
     console.log(`\n  ${DIM}directory ${RESET}${displayPath(projectDir)}`);
-    console.log(`  ${DIM}python   ${RESET}${names.pyPackage}/`);
+    console.log(`  ${DIM}python   ${RESET}server/`);
     console.log(`  ${DIM}tool     ${RESET}${names.toolName}`);
     console.log(`  ${DIM}resource ${RESET}${names.resourceUri}\n`);
 

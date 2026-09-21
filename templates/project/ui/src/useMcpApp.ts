@@ -7,7 +7,6 @@
  * `App` is constructed but before `connect()`.
  */
 import type {
-  App,
   McpUiDisplayMode,
   McpUiHostContext,
 } from "@modelcontextprotocol/ext-apps";
@@ -15,19 +14,16 @@ import { useApp, useHostStyles } from "@modelcontextprotocol/ext-apps/react";
 import type { CallToolResult } from "@modelcontextprotocol/client";
 import { useCallback, useEffect, useState } from "react";
 
-import { isPanelData, type PanelData } from "./types";
+import { isAppState, type AppState } from "./types";
 
 const APP_INFO = { name: "{{slug}}", version: "0.1.0" };
-
-/** App-only tool, declared with visibility=["app"] on the server. */
-const REFRESH_TOOL = "{{refreshToolName}}";
 
 /**
  * A host may deliver the payload as `structuredContent`, as a JSON text
  * block, or both. Try the structured form first and fall back to text.
  */
-function parsePanelData(result: CallToolResult): PanelData | null {
-  if (isPanelData(result.structuredContent)) {
+function parseAppState(result: CallToolResult): AppState | null {
+  if (isAppState(result.structuredContent)) {
     return result.structuredContent;
   }
 
@@ -35,7 +31,7 @@ function parsePanelData(result: CallToolResult): PanelData | null {
   if (textBlock?.type === "text") {
     try {
       const parsed: unknown = JSON.parse(textBlock.text);
-      if (isPanelData(parsed)) return parsed;
+      if (isAppState(parsed)) return parsed;
     } catch {
       // Not JSON — fall through to the null return below.
     }
@@ -45,31 +41,26 @@ function parsePanelData(result: CallToolResult): PanelData | null {
 }
 
 export interface McpAppState {
-  app: App | null;
   isConnected: boolean;
   error: Error | null;
   hostContext: McpUiHostContext | undefined;
 
-  data: PanelData | null;
-  /** True while a tool the UI itself invoked is in flight. */
-  isBusy: boolean;
-  /** Set when the last UI-initiated action failed; cleared on the next one. */
+  /** The server's message, or null until the first tool result arrives. */
+  message: string | null;
+  /** Set when a UI-initiated action failed; cleared on the next one. */
   actionError: string | null;
 
   /** `"inline"`, `"fullscreen"` or `"pip"` — hosts may add more. */
   displayMode: McpUiDisplayMode;
   canGoFullscreen: boolean;
 
-  refresh: () => Promise<void>;
   toggleFullscreen: () => Promise<void>;
   sendToChat: (text: string) => Promise<void>;
-  reportSelection: (item: { title: string } | null) => Promise<void>;
 }
 
 export function useMcpApp(): McpAppState {
-  const [data, setData] = useState<PanelData | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [hostContext, setHostContext] = useState<McpUiHostContext | undefined>();
-  const [isBusy, setIsBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
   const { app, isConnected, error } = useApp({
@@ -90,8 +81,8 @@ export function useMcpApp(): McpAppState {
 
       // The result of the tool that opened this app.
       created.ontoolresult = (result) => {
-        const parsed = parsePanelData(result);
-        if (parsed) setData(parsed);
+        const parsed = parseAppState(result);
+        if (parsed) setMessage(parsed.message);
       };
 
       created.ontoolcancelled = (params) => {
@@ -123,29 +114,6 @@ export function useMcpApp(): McpAppState {
     hostContext?.availableDisplayModes?.includes("fullscreen"),
   );
 
-  /** Calls the app-only refresh tool and swaps in the new payload. */
-  const refresh = useCallback(async () => {
-    if (!app) return;
-    setIsBusy(true);
-    setActionError(null);
-    try {
-      const result = await app.callServerTool({
-        name: REFRESH_TOOL,
-        arguments: { query: data?.query ?? "", limit: 10 },
-      });
-      const parsed = parsePanelData(result);
-      if (parsed) {
-        setData(parsed);
-      } else {
-        setActionError("Refresh returned an unexpected payload.");
-      }
-    } catch (cause) {
-      setActionError(cause instanceof Error ? cause.message : String(cause));
-    } finally {
-      setIsBusy(false);
-    }
-  }, [app, data?.query]);
-
   /**
    * The host decides whether to grant the mode, and answers with the mode
    * actually applied — so the result is authoritative, not the request.
@@ -153,6 +121,7 @@ export function useMcpApp(): McpAppState {
   const toggleFullscreen = useCallback(async () => {
     if (!app) return;
     const next = displayMode === "fullscreen" ? "inline" : "fullscreen";
+    setActionError(null);
     try {
       const result = await app.requestDisplayMode({ mode: next });
       setHostContext((previous) => ({ ...previous, displayMode: result.mode }));
@@ -179,39 +148,15 @@ export function useMcpApp(): McpAppState {
     [app],
   );
 
-  /**
-   * Tells the model what the user is looking at, without saying anything in
-   * the conversation. Without this the model cannot see UI-only state, so a
-   * follow-up like "summarise this one" has nothing to resolve.
-   */
-  const reportSelection = useCallback(
-    async (item: { title: string } | null) => {
-      if (!app) return;
-      const text = item
-        ? `The user selected "${item.title}" in the {{title}} panel.`
-        : "The user cleared their selection in the {{title}} panel.";
-      try {
-        await app.updateModelContext({ content: [{ type: "text", text }] });
-      } catch (cause) {
-        console.error(cause);
-      }
-    },
-    [app],
-  );
-
   return {
-    app,
     isConnected,
     error,
     hostContext,
-    data,
-    isBusy,
+    message,
     actionError,
     displayMode,
     canGoFullscreen,
-    refresh,
     toggleFullscreen,
     sendToChat,
-    reportSelection,
   };
 }

@@ -26,10 +26,16 @@ export function toSlug(raw) {
     .replace(/-{2,}/g, "-");
 }
 
-/** snake_case, valid as a Python identifier. */
-export function toPyPackage(slug) {
+/**
+ * snake_case, valid as a Python identifier.
+ *
+ * The server package is always named `server/`, so this is not a directory
+ * name — it is the app's identifier inside Python code, where it ends up in
+ * tool names and so must still be a legal identifier.
+ */
+export function toPyName(slug) {
   let name = slug.replace(/-/g, "_");
-  // A Python module may not start with a digit, and may not be a keyword.
+  // A Python identifier may not start with a digit, and may not be a keyword.
   if (/^[0-9]/.test(name)) name = `app_${name}`;
   if (PY_KEYWORDS.has(name)) name = `${name}_app`;
   return name;
@@ -72,18 +78,16 @@ export function validateAppName(raw) {
 export function deriveNames(raw) {
   const appName = String(raw).trim();
   const slug = toSlug(appName);
-  const pyPackage = toPyPackage(slug);
+  const pyName = toPyName(slug);
   const title = toTitle(slug);
 
   return {
     appName,
     slug,
-    pyPackage,
+    pyName,
     title,
     // The MCP tool the model calls to open the UI.
-    toolName: `show_${pyPackage}`,
-    // The app-only tool the UI calls back into for fresh data.
-    refreshToolName: `refresh_${pyPackage}`,
+    toolName: `show_${pyName}`,
     // The ui:// resource that carries the bundled HTML.
     resourceUri: `ui://${slug}/main.html`,
     year: String(new Date().getFullYear()),

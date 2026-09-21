@@ -139,13 +139,17 @@ The generated server uses FastMCP 4's first-class MCP Apps support
 ## Developing this scaffolder
 
 Templates live in `templates/project/`. `{{variable}}` placeholders are
-substituted in both file contents and path names — including directory names
-like `templates/project/{{pyPackage}}/`.
+substituted in both file contents and path names, so a directory can be named
+after a variable too.
 
 Available variables are whatever `deriveNames()` in `src/names.js` returns:
-`appName`, `slug`, `pyPackage`, `title`, `toolName`, `refreshToolName`,
-`resourceUri`, `year`. An unknown placeholder throws at render time rather
-than emitting `{{typo}}` into someone's project.
+`appName`, `slug`, `pyName`, `title`, `toolName`, `resourceUri`, `year`. An
+unknown placeholder throws at render time rather than emitting `{{typo}}` into
+someone's project.
+
+`pyName` is the app's snake_case identifier — it appears in tool names, not as
+a directory. The Python package is always `server/`, so generated projects have
+the same layout whatever the app is called.
 
 Files named `gitignore` are renamed to `.gitignore` on the way out, because
 npm strips dotfiles from published packages.

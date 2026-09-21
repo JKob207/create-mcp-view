@@ -51,7 +51,7 @@ def register_ui(mcp: FastMCP) -> None:
         # needs to reach external origins or use the camera, clipboard, etc.
         app=AppConfig(),
     )
-    def {{pyPackage}}_ui() -> str:
+    def ui_resource() -> str:
         """Return the bundled single-file UI."""
         # Read on every request rather than at import time, so `vite build
         # --watch` is picked up without restarting the server.

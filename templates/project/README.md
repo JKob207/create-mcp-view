@@ -7,7 +7,7 @@ React UI inside the host, instead of returning text the model has to describe.
 model calls {{toolName}}
         │
         ▼
-FastMCP returns PanelData ──────────────┐
+FastMCP returns AppState ───────────────┐
         │                               │
         │ tool _meta.ui.resourceUri     │ tool result
         ▼                               ▼
@@ -37,12 +37,12 @@ resource returns a placeholder page telling you so.
 ## Project layout
 
 ```
-{{pyPackage}}/
+server/
   __main__.py   entry point: stdio by default, --http for streamable HTTP
-  server.py     builds the FastMCP instance
-  tools.py      the two tools — replace _load_items with your data
+  app.py        builds the FastMCP instance
+  tools.py      the tool the model calls
   ui.py         registers the ui:// resource that serves the bundle
-  models.py     Pydantic payloads (mirror of ui/src/types.ts)
+  models.py     Pydantic payload (mirror of ui/src/types.ts)
 ui/
   src/useMcpApp.ts   all MCP Apps SDK wiring: handlers, host context, actions
   src/App.tsx        the view
@@ -60,7 +60,7 @@ Three things make this an MCP App:
 
    ```python
    @mcp.resource(uri="{{resourceUri}}", app=AppConfig())
-   def {{pyPackage}}_ui() -> str: ...
+   def ui_resource() -> str: ...
    ```
 
    `app=AppConfig()` is what sets the mime type to
@@ -76,37 +76,41 @@ Three things make this an MCP App:
    sandboxed iframe with no origin to resolve `<script src>` against, so
    `vite-plugin-singlefile` inlines all JS and CSS into `ui/dist/index.html`.
 
-## Tool visibility
-
-`visibility` decides who may call a tool:
-
-| Value                | Meaning                                                  |
-| -------------------- | -------------------------------------------------------- |
-| `["model", "app"]`   | Default. The model and the UI can both call it.           |
-| `["app"]`            | UI only — refresh buttons, form submits, pagination.      |
-| `["model"]`          | Model only.                                               |
-
-`{{refreshToolName}}` is `["app"]`, so the model never decides on its own to
-refresh the panel; the button does.
-
 ## What the UI can do
 
-All of it lives in `ui/src/useMcpApp.ts`:
+The panel shows the app title, the server's message, and two buttons —
+fullscreen, and one that puts a question in the conversation. All of the SDK
+wiring lives in `ui/src/useMcpApp.ts`:
 
 | Capability              | Call                                | Used for                             |
 | ----------------------- | ----------------------------------- | ------------------------------------ |
 | Receive the tool result | `app.ontoolresult`                  | Initial render                       |
 | Stream arguments        | `app.ontoolinputpartial`            | Progress while the model generates   |
-| Call back into Python   | `app.callServerTool()`              | Refresh, pagination, form submits    |
-| Speak in the chat       | `app.sendMessage()`                 | "Ask about this"                     |
-| Inform the model quietly| `app.updateModelContext()`          | Tell it what the user selected       |
+| Speak in the chat       | `app.sendMessage()`                 | "Ask about current time"             |
 | Go fullscreen           | `app.requestDisplayMode()`          | Expand from inline                   |
 | Match the host's design | `useHostStyles(app)`                | CSS variables, fonts, light/dark     |
+| Call back into Python   | `app.callServerTool()`              | Refresh, pagination, form submits    |
+| Inform the model quietly| `app.updateModelContext()`          | Tell it what the user selected       |
 | Debug inside the host   | `app.sendLog()`                     | Logs the host surfaces               |
 
 > **Register every handler before connecting.** `useApp`'s `onAppCreated` runs
 > after the app is constructed but before `connect()`, which is the only
 > window where handlers are guaranteed to catch the opening notifications.
+
+### Adding a button that calls the server
+
+Give the new tool `visibility=["app"]` so the model never sees it — a button
+is not something the model should decide to press:
+
+```python
+@mcp.tool(name="refresh_data", app=AppConfig(visibility=["app"]))
+async def refresh_data() -> AppState:
+    return AppState(message="Refreshed.")
+```
+
+```ts
+const result = await app.callServerTool({ name: "refresh_data", arguments: {} });
+```
 
 ## Development loop
 
@@ -127,7 +131,7 @@ stays on "Connecting…".
 ### Inspecting the server
 
 ```bash
-uv run fastmcp dev inspector {{pyPackage}}/server.py
+uv run fastmcp dev inspector server/app.py
 ```
 
 ### Tests
@@ -158,15 +162,16 @@ http://127.0.0.1:8000/mcp
 ```
 
 The UI only renders in hosts that implement the MCP Apps extension. Elsewhere
-the tool still works and returns its JSON, which is why `PanelData` should
-stay readable on its own.
+the tool still works and returns its JSON, which is why `AppState` should stay
+readable on its own.
 
 ## Making it yours
 
-1. Replace `_load_items` in `{{pyPackage}}/tools.py` with a real data source.
-2. Change `PanelData` / `Item` in `models.py` **and** `ui/src/types.ts`
-   together — `isPanelData` will reject payloads that only changed on one side.
-3. Rewrite `ui/src/App.tsx`.
+1. Rewrite `ui/src/App.tsx`. The accent colour is `--accent` in
+   `ui/src/styles.css`; everything else follows the host's theme.
+2. Change `AppState` in `server/models.py` **and** `ui/src/types.ts` together
+   — `isAppState` will reject payloads that only changed on one side.
+3. Put real work in `server/tools.py`.
 4. If the UI needs to reach an external origin, declare it — a sandboxed
    iframe blocks anything undeclared:
 

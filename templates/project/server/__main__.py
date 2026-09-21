@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import argparse
 
-from {{pyPackage}}.server import mcp
+from server.app import mcp
 
 
 def main() -> None:
